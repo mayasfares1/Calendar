@@ -24,7 +24,7 @@ const localizer = dateFnsLocalizer({
     locales,
 });
 
-function App() {
+function Calendar_Schedule() {
     const [events, setEvents] = useState([]);
 
     const handleSelect = ({ start, end }) => {
@@ -100,7 +100,7 @@ function App() {
                 const shiftColors = {
                     Covered: '#4CAF50',
                     Pending: '#FFC107',
-                    ForSale: '#F44336'
+                    For_Sale: '#F44336'
                 };
 
                 const color = shiftColors[newType];
@@ -154,4 +154,4 @@ function App() {
     );
 }
 
-    export default App;
+    export default Calendar_Schedule;
