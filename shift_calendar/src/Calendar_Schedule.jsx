@@ -10,7 +10,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './App.css';
-import {addDays} from "date-fns";
+import { addDays } from 'date-fns';
 
 const locales = {
     'en-US': enUS,
@@ -67,7 +67,8 @@ function Calendar_Schedule() {
                 end: endDateTime,
                 allDay: false,
                 type: shiftType,
-                color: color
+                color: color,
+                forSale: shiftType === 'ForSale'
             };
 
             setEvents(prevEvents => [...prevEvents, newEvent]);
@@ -100,7 +101,7 @@ function Calendar_Schedule() {
                 const shiftColors = {
                     Covered: '#4CAF50',
                     Pending: '#FFC107',
-                    For_Sale: '#F44336'
+                    ForSale: '#F44336'
                 };
 
                 const color = shiftColors[newType];
@@ -116,7 +117,8 @@ function Calendar_Schedule() {
                     start: startDateTime,
                     end: endDateTime,
                     type: newType,
-                    color: color
+                    color: color,
+                    forSale: newType === 'ForSale'
                 };
 
                 setEvents(events.map(e => e.id === event.id ? updatedEvent : e));
@@ -127,12 +129,25 @@ function Calendar_Schedule() {
         }
     };
 
+    const toggleForSale = (event) => {
+        const updatedEvent = {
+            ...event,
+            forSale: !event.forSale,
+            type: event.forSale ? 'Covered' : 'ForSale',
+            color: event.forSale ? '#4CAF50' : '#F44336',
+        };
+
+        setEvents(events.map(e => e.id === event.id ? updatedEvent : e));
+        toast.success(event.forSale ? "Sale canceled!" : "Event put up for sale!");
+    };
+
     const eventStyleGetter = (event) => ({
         style: {
             backgroundColor: event.color,
             color: 'white',
             borderRadius: '0px',
-            border: 'none'
+            border: 'none',
+            position: 'relative'
         }
     });
 
@@ -140,18 +155,26 @@ function Calendar_Schedule() {
         <div className="calendar-container">
             <Calendar
                 localizer={localizer}
-                    events={events}
-                    startAccessor="start"
-                    endAccessor="end"
-                    selectable
-                    onSelectSlot={handleSelect}
-                    onSelectEvent={handleSelectEvent}
-                    eventPropGetter={eventStyleGetter}
-                    style={{ height: '100%', width: '100%' }}
-                    />
-                    <ToastContainer position="top-center" autoClose={5000} />
+                events={events}
+                startAccessor="start"
+                endAccessor="end"
+                selectable
+                onSelectSlot={handleSelect}
+                onSelectEvent={handleSelectEvent}
+                eventPropGetter={eventStyleGetter}
+                style={{ height: '100%', width: '100%' }}
+            />
+            {events.map(event => (
+                <div key={event.id} style={{ backgroundColor: event.color, color: 'white', padding: '10px', margin: '10px' }}>
+                    {event.title}
+                    <button onClick={() => toggleForSale(event)} style={{ marginLeft: '10px', padding: '5px', backgroundColor: '#2196F3', color: 'white' }}>
+                        {event.forSale ? 'Cancel Sale' : 'For Sale'}
+                    </button>
+                </div>
+            ))}
+            <ToastContainer position="top-center" autoClose={5000} />
         </div>
     );
 }
 
-    export default Calendar_Schedule;
+export default Calendar_Schedule;
